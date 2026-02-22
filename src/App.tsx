@@ -1,13 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Card } from './components/Card';
 import { SuitSelector } from './components/SuitSelector';
+import { LandingPage } from './components/LandingPage';
 import { useCrazyEights } from './hooks/useCrazyEights';
 import { GameStatus, Suit } from './types';
 import { getSuitSymbol, getSuitColor } from './constants';
 import { Trophy, RotateCcw, Info, Layers } from 'lucide-react';
 
 export default function App() {
+  const [gameStarted, setGameStarted] = useState(false);
   const {
     playerHand,
     aiHand,
@@ -27,6 +29,10 @@ export default function App() {
 
   const isPlayerTurn = status === GameStatus.PLAYER_TURN;
 
+  if (!gameStarted) {
+    return <LandingPage onStart={() => setGameStarted(true)} />;
+  }
+
   return (
     <div className="min-h-screen w-full flex flex-col items-center p-4 sm:p-8 felt-texture overflow-hidden">
       {/* Header Title */}
@@ -41,8 +47,8 @@ export default function App() {
         {/* AI Hand */}
         <div className="w-full flex flex-col items-center gap-4">
           <div className="flex items-center gap-2 bg-black/20 px-4 py-1 rounded-full backdrop-blur-md">
-            <span className="text-xs font-bold uppercase tracking-widest opacity-60">Opponent</span>
-            <span className="text-sm font-mono font-bold">{aiHand.length} Cards</span>
+            <span className="text-xs font-bold uppercase tracking-widest opacity-60">对手</span>
+            <span className="text-sm font-mono font-bold">{aiHand.length} 张牌</span>
           </div>
           <div className="flex justify-center -space-x-4 sm:-space-x-6 h-32 sm:h-40">
             <AnimatePresence>
@@ -91,7 +97,7 @@ export default function App() {
                   <div className="absolute -bottom-2 -right-2 w-full h-full bg-zinc-900 rounded-lg -z-20 border border-[#d4af37]/10" />
                 )}
               </div>
-              <span className="text-xs font-mono font-bold opacity-50">{deck.length} Left</span>
+              <span className="text-xs font-mono font-bold opacity-50">{deck.length} 剩余</span>
             </div>
 
             {/* Discard Pile */}
@@ -116,7 +122,7 @@ export default function App() {
                   </motion.div>
                 )}
               </div>
-              <span className="text-xs font-mono font-bold opacity-50">Discard</span>
+              <span className="text-xs font-mono font-bold opacity-50">弃牌堆</span>
             </div>
           </div>
         </div>
@@ -140,8 +146,8 @@ export default function App() {
         </div>
         <div className="flex items-center gap-4">
            <div className="flex items-center gap-2 bg-white/20 px-4 py-1 rounded-full backdrop-blur-md">
-            <span className="text-xs font-bold uppercase tracking-widest opacity-60">You</span>
-            <span className="text-sm font-mono font-bold">{playerHand.length} Cards</span>
+            <span className="text-xs font-bold uppercase tracking-widest opacity-60">你</span>
+            <span className="text-sm font-mono font-bold">{playerHand.length} 张牌</span>
           </div>
           
           {/* Skip/End Turn Button (if drew a card and still can't play) */}
@@ -150,7 +156,7 @@ export default function App() {
               onClick={() => drawCard(true)}
               className="bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider transition-colors"
             >
-              Skip Turn
+              跳过回合
             </button>
           )}
         </div>
@@ -177,19 +183,19 @@ export default function App() {
                 <Trophy className="w-10 h-10 text-white" />
               </div>
               <h2 className="text-4xl font-display font-black text-slate-900 mb-2">
-                {winner === 'PLAYER' ? 'VICTORY!' : 'DEFEAT'}
+                {winner === 'PLAYER' ? '胜利！' : '失败'}
               </h2>
               <p className="text-slate-500 mb-8 font-medium">
                 {winner === 'PLAYER' 
-                  ? 'You played your cards right! MR is impressed.' 
-                  : 'The AI outsmarted you this time. Try again?'}
+                  ? '你的牌技出神入化！MR 对你印象深刻。' 
+                  : '这次 AI 技高一筹。再试一次？'}
               </p>
               <button
                 onClick={initGame}
                 className="w-full bg-slate-900 hover:bg-slate-800 text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all active:scale-95"
               >
                 <RotateCcw className="w-5 h-5" />
-                Play Again
+                再玩一次
               </button>
             </motion.div>
           </motion.div>
@@ -201,7 +207,7 @@ export default function App() {
         <button 
           onClick={initGame}
           className="p-3 bg-white/10 hover:bg-white/20 rounded-full backdrop-blur-md border border-white/10 transition-all"
-          title="Restart Game"
+          title="重新开始"
         >
           <RotateCcw className="w-5 h-5" />
         </button>

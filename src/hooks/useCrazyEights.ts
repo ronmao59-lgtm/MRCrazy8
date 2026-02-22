@@ -10,7 +10,7 @@ export const useCrazyEights = () => {
   const [status, setStatus] = useState<GameStatus>(GameStatus.DEALING);
   const [activeSuit, setActiveSuit] = useState<Suit | null>(null);
   const [winner, setWinner] = useState<Winner>(null);
-  const [message, setMessage] = useState<string>('Dealing cards...');
+  const [message, setMessage] = useState<string>('正在发牌...');
 
   // Initialize Game
   const initGame = useCallback(() => {
@@ -32,7 +32,7 @@ export const useCrazyEights = () => {
     setActiveSuit(firstDiscard.suit);
     setStatus(GameStatus.PLAYER_TURN);
     setWinner(null);
-    setMessage('Your turn!');
+    setMessage('轮到你了！');
   }, []);
 
   useEffect(() => {
@@ -58,7 +58,7 @@ export const useCrazyEights = () => {
     if (card.rank === Rank.EIGHT) {
       if (isPlayer) {
         setStatus(GameStatus.SELECTING_SUIT);
-        setMessage('Pick a new suit!');
+        setMessage('请选择一个花色！');
       } else {
         // AI picks a suit (simple: pick the suit it has most of)
         const counts = {
@@ -69,21 +69,29 @@ export const useCrazyEights = () => {
         };
         aiHand.forEach(c => counts[c.suit]++);
         const bestSuit = (Object.keys(counts) as Suit[]).reduce((a, b) => counts[a] > counts[b] ? a : b);
+        
+        const suitNames = {
+          [Suit.HEARTS]: '红桃',
+          [Suit.DIAMONDS]: '方块',
+          [Suit.CLUBS]: '梅花',
+          [Suit.SPADES]: '黑桃',
+        };
+
         setActiveSuit(bestSuit);
         setStatus(GameStatus.PLAYER_TURN);
-        setMessage(`AI played 8 and chose ${bestSuit}! Your turn.`);
+        setMessage(`AI 出了 8 并选择了 ${suitNames[bestSuit]}！轮到你了。`);
       }
     } else {
       setActiveSuit(card.suit);
       const nextStatus = isPlayer ? GameStatus.AI_TURN : GameStatus.PLAYER_TURN;
       setStatus(nextStatus);
-      setMessage(isPlayer ? "AI's turn..." : "Your turn!");
+      setMessage(isPlayer ? "AI 的回合..." : "轮到你了！");
     }
   };
 
   const drawCard = (isPlayer: boolean) => {
     if (deck.length === 0) {
-      setMessage("Deck is empty! Skipping turn.");
+      setMessage("牌堆已空！跳过回合。");
       setStatus(isPlayer ? GameStatus.AI_TURN : GameStatus.PLAYER_TURN);
       return;
     }
@@ -100,16 +108,16 @@ export const useCrazyEights = () => {
       // Let's check if it's playable.
       if (!isPlayable(drawnCard)) {
         setStatus(GameStatus.AI_TURN);
-        setMessage("Drawn card not playable. AI's turn.");
+        setMessage("抽到的牌无法出。AI 的回合。");
       } else {
-        setMessage("Drawn a playable card! Play it or end turn?");
+        setMessage("抽到了可以出的牌！出牌还是结束回合？");
         // In this implementation, we'll let the player decide to play it.
       }
     } else {
       setAiHand((prev) => [...prev, drawnCard]);
       if (!isPlayable(drawnCard)) {
         setStatus(GameStatus.PLAYER_TURN);
-        setMessage("AI drew a card and couldn't play. Your turn.");
+        setMessage("AI 抽了一张牌但无法出。轮到你了。");
       } else {
         // AI plays the drawn card immediately if it can
         setTimeout(() => playCard(drawnCard, false), 1000);
@@ -118,9 +126,15 @@ export const useCrazyEights = () => {
   };
 
   const selectWildSuit = (suit: Suit) => {
+    const suitNames = {
+      [Suit.HEARTS]: '红桃',
+      [Suit.DIAMONDS]: '方块',
+      [Suit.CLUBS]: '梅花',
+      [Suit.SPADES]: '黑桃',
+    };
     setActiveSuit(suit);
     setStatus(GameStatus.AI_TURN);
-    setMessage(`You chose ${suit}! AI's turn...`);
+    setMessage(`你选择了 ${suitNames[suit]}！AI 的回合...`);
   };
 
   // AI Logic
@@ -145,11 +159,11 @@ export const useCrazyEights = () => {
     if (playerHand.length === 0 && status !== GameStatus.DEALING) {
       setWinner('PLAYER');
       setStatus(GameStatus.GAME_OVER);
-      setMessage('Congratulations! You won!');
+      setMessage('恭喜！你赢了！');
     } else if (aiHand.length === 0 && status !== GameStatus.DEALING) {
       setWinner('AI');
       setStatus(GameStatus.GAME_OVER);
-      setMessage('AI won! Better luck next time.');
+      setMessage('AI 赢了！下次好运。');
     }
   }, [playerHand.length, aiHand.length, status]);
 

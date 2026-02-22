@@ -9,10 +9,10 @@ interface SuitSelectorProps {
 
 export const SuitSelector: React.FC<SuitSelectorProps> = ({ onSelect }) => {
   const suits = [
-    { type: Suit.HEARTS, label: 'Hearts' },
-    { type: Suit.DIAMONDS, label: 'Diamonds' },
-    { type: Suit.CLUBS, label: 'Clubs' },
-    { type: Suit.SPADES, label: 'Spades' },
+    { type: Suit.HEARTS, label: '红桃' },
+    { type: Suit.DIAMONDS, label: '方块' },
+    { type: Suit.CLUBS, label: '梅花' },
+    { type: Suit.SPADES, label: '黑桃' },
   ];
 
   return (
@@ -23,7 +23,7 @@ export const SuitSelector: React.FC<SuitSelectorProps> = ({ onSelect }) => {
     >
       <div className="bg-white p-8 rounded-3xl shadow-2xl max-w-md w-full mx-4">
         <h2 className="text-2xl font-display font-bold text-slate-900 mb-6 text-center">
-          Wild 8! Pick a Suit
+          万能 8！请选择花色
         </h2>
         <div className="grid grid-cols-2 gap-4">
           {suits.map((suit) => (
