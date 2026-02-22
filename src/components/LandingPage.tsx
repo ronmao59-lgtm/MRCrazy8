@@ -61,8 +61,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStart }) => {
           MR CRAZY 8S
         </h1>
         
-        <p className="text-[#d4af37]/60 font-medium tracking-[0.2em] uppercase text-sm mb-12">
-          极致扑克体验
+        <p className="text-[#d4af37]/60 font-medium tracking-[0.1em] text-sm mb-12 max-w-md">
+          匹配数字或花色即可出牌，8是万用牌，先出完所有牌的人获胜
         </p>
 
         {/* Actions */}
